@@ -1,6 +1,6 @@
 # go-wkhtmltoimage
 
-[![GoDoc](https://godoc.org/github.com/ninetwentyfour/go-wkhtmltoimage?status.png)](https://godoc.org/github.com/ninetwentyfour/go-wkhtmltoimage)
+[![GoDoc](https://godoc.org/github.com/ninetwentyfour/go-wkhtmltoimage?status.png)](https://godoc.org/github.com/ninetwentyfour/go-wkhtmltoimage) [![Build Status](https://travis-ci.org/ninetwentyfour/go-wkhtmltoimage.svg)](https://travis-ci.org/ninetwentyfour/go-wkhtmltoimage)
 
 go wrapper around [wkhtmltoimage](http://wkhtmltopdf.org/).
 
