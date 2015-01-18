@@ -1,5 +1,7 @@
 # go-wkhtmltoimage
 
+[![GoDoc](https://godoc.org/github.com/ninetwentyfour/go-wkhtmltoimage?status.png)](https://godoc.org/github.com/ninetwentyfour/go-wkhtmltoimage)
+
 go wrapper around [wkhtmltoimage](http://wkhtmltopdf.org/).
 
 Not production ready.
@@ -61,10 +63,6 @@ Save html string to image
       c := wkhtmltoimage.ImageOptions{Input: "-", Format: "png", Output: "/tmp/example.png", Html: html}
       wkhtmltoimage.GenerateImage(&c)
     }
-
-## Docs
-
-[http://godoc.org/github.com/ninetwentyfour/go-wkhtmltoimage](http://godoc.org/github.com/ninetwentyfour/go-wkhtmltoimage)
 
 ## Contributing:
 1. Fork it

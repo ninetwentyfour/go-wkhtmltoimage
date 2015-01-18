@@ -21,7 +21,7 @@ type ImageOptions struct {
 	Format string
 	// Height is the height of the screen used to render in pixels.
 	//
-	// Default is calculated from page content. Default 0
+	// Default is calculated from page content. Default 0 (renders entire page top to bottom)
 	Height int
 	// Width is the width of the screen used to render in pixels.
 	//
