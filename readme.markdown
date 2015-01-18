@@ -62,6 +62,10 @@ Save html string to image
       wkhtmltoimage.GenerateImage(&c)
     }
 
+## Docs
+
+[http://godoc.org/github.com/ninetwentyfour/go-wkhtmltoimage](http://godoc.org/github.com/ninetwentyfour/go-wkhtmltoimage)
+
 ## Contributing:
 1. Fork it
 1. Create your feature branch (`git checkout -b my-new-feature`)
