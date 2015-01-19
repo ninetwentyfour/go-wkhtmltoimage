@@ -2,6 +2,7 @@
 package wkhtmltoimage
 
 import (
+	"bytes"
 	"errors"
 	"os"
 	"os/exec"
@@ -60,9 +61,20 @@ func GenerateImage(options *ImageOptions) ([]byte, error) {
 		cmd.Stdin = strings.NewReader(options.Html)
 	}
 
-	output, _ := cmd.CombinedOutput()
+	output, err := cmd.CombinedOutput()
 
-	return output, nil
+	// sometimes wkhtml returns more output than the image. should be fixed when it updates to qt5
+	// this sucks until then.
+	beforeLength := len(output)
+	trimmed := bytes.TrimPrefix(output, []byte("QFont::setPixelSize: Pixel size <= 0 (0)\n"))
+	afterLength := len(trimmed)
+	for beforeLength != afterLength {
+		beforeLength = len(trimmed)
+		trimmed = bytes.TrimPrefix(trimmed, []byte("QFont::setPixelSize: Pixel size <= 0 (0)\n"))
+		afterLength = len(trimmed)
+	}
+
+	return trimmed, err
 }
 
 // buildParams takes the image options set by the user and turns them into command flags for wkhtmltoimage
@@ -75,7 +87,9 @@ func buildParams(options *ImageOptions) ([]string, error) {
 	}
 
 	// silence extra wkhtmltoimage output
+	// might want to add --javascript-delay too?
 	a = append(a, "-q")
+	// a = append(a, "--disable-plugins")
 
 	if options.Format != "" {
 		a = append(a, "--format")
