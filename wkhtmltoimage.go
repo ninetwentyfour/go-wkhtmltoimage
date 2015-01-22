@@ -4,6 +4,8 @@ package wkhtmltoimage
 import (
 	"bytes"
 	"errors"
+	"image/jpeg"
+	"image/png"
 	"os"
 	"os/exec"
 	"strconv"
@@ -63,16 +65,7 @@ func GenerateImage(options *ImageOptions) ([]byte, error) {
 
 	output, err := cmd.CombinedOutput()
 
-	// sometimes wkhtml returns more output than the image. should be fixed when it updates to qt5
-	// this sucks until then.
-	beforeLength := len(output)
-	trimmed := bytes.TrimPrefix(output, []byte("QFont::setPixelSize: Pixel size <= 0 (0)\n"))
-	afterLength := len(trimmed)
-	for beforeLength != afterLength {
-		beforeLength = len(trimmed)
-		trimmed = bytes.TrimPrefix(trimmed, []byte("QFont::setPixelSize: Pixel size <= 0 (0)\n"))
-		afterLength = len(trimmed)
-	}
+	trimmed := cleanupOutput(output, options.Format)
 
 	return trimmed, err
 }
@@ -89,11 +82,13 @@ func buildParams(options *ImageOptions) ([]string, error) {
 	// silence extra wkhtmltoimage output
 	// might want to add --javascript-delay too?
 	a = append(a, "-q")
-	// a = append(a, "--disable-plugins")
+	a = append(a, "--disable-plugins")
 
+	a = append(a, "--format")
 	if options.Format != "" {
-		a = append(a, "--format")
 		a = append(a, options.Format)
+	} else {
+		a = append(a, "png")
 	}
 
 	if options.Height != 0 {
@@ -126,4 +121,35 @@ func buildParams(options *ImageOptions) ([]string, error) {
 	}
 
 	return a, nil
+}
+
+func cleanupOutput(img []byte, format string) []byte {
+	buf := new(bytes.Buffer)
+	switch {
+	case format == "png":
+		decoded, err := png.Decode(bytes.NewReader(img))
+		for err != nil {
+			img = img[1:]
+			if len(img) == 0 {
+				break
+			}
+			decoded, err = png.Decode(bytes.NewReader(img))
+		}
+		png.Encode(buf, decoded)
+		return buf.Bytes()
+	case format == "jpg":
+		decoded, err := jpeg.Decode(bytes.NewReader(img))
+		for err != nil {
+			img = img[1:]
+			if len(img) == 0 {
+				break
+			}
+			decoded, err = jpeg.Decode(bytes.NewReader(img))
+		}
+		jpeg.Encode(buf, decoded, nil)
+		return buf.Bytes()
+		// case format == "svg":
+		// 	return img
+	}
+	return img
 }
