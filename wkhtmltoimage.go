@@ -13,6 +13,10 @@ import (
 
 // ImageOptions represent the options to generate the image.
 type ImageOptions struct {
+	// BinaryPrefix any prefix command to wkhtmltoimage
+	//
+	// Any command to prefex wkhtmltoimage (e.g. xvfb-run)
+	BinaryPrefix string
 	// BinaryPath the path to your wkhtmltoimage binary. REQUIRED
 	//
 	// Must be absolute path e.g /usr/local/bin/wkhtmltoimage
@@ -59,7 +63,13 @@ func GenerateImage(options *ImageOptions) ([]byte, error) {
 		return []byte{}, errors.New("BinaryPath not set")
 	}
 
-	cmd := exec.Command(options.BinaryPath, arr...)
+	cmd := new(exec.Cmd)
+	if options.BinaryPrefix != "" {
+		arr = append([]string{options.BinaryPath}, arr...)
+		cmd = exec.Command(options.BinaryPrefix, arr...)
+	} else {
+		cmd = exec.Command(options.BinaryPath, arr...)
+	}
 
 	if options.Html != "" {
 		cmd.Stdin = strings.NewReader(options.Html)
@@ -77,8 +87,8 @@ func GenerateImage(options *ImageOptions) ([]byte, error) {
 func buildParams(options *ImageOptions) ([]string, error) {
 	a := []string{}
 
-	if options.Input == "" {
-		return []string{}, errors.New("Must provide input")
+	if options.BinaryPath == "" {
+		return []string{}, errors.New("BinaryPath not set")
 	}
 
 	// silence extra wkhtmltoimage output
