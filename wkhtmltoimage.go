@@ -2,10 +2,10 @@
 package wkhtmltoimage
 
 import (
-	"bytes"
+	// "bytes"
 	"errors"
-	"image/jpeg"
-	"image/png"
+	// "image/jpeg"
+	// "image/png"
 	"os/exec"
 	"strconv"
 	"strings"
@@ -136,32 +136,32 @@ func buildParams(options *ImageOptions) ([]string, error) {
 }
 
 func cleanupOutput(img []byte, format string) []byte {
-	buf := new(bytes.Buffer)
-	switch {
-	case format == "png":
-		decoded, err := png.Decode(bytes.NewReader(img))
-		for err != nil {
-			img = img[1:]
-			if len(img) == 0 {
-				break
-			}
-			decoded, err = png.Decode(bytes.NewReader(img))
-		}
-		png.Encode(buf, decoded)
-		return buf.Bytes()
-	case format == "jpg":
-		decoded, err := jpeg.Decode(bytes.NewReader(img))
-		for err != nil {
-			img = img[1:]
-			if len(img) == 0 {
-				break
-			}
-			decoded, err = jpeg.Decode(bytes.NewReader(img))
-		}
-		jpeg.Encode(buf, decoded, nil)
-		return buf.Bytes()
-		// case format == "svg":
-		// 	return img
-	}
+	// buf := new(bytes.Buffer)
+	// switch {
+	// case format == "png":
+	// 	decoded, err := png.Decode(bytes.NewReader(img))
+	// 	for err != nil {
+	// 		img = img[1:]
+	// 		if len(img) == 0 {
+	// 			break
+	// 		}
+	// 		decoded, err = png.Decode(bytes.NewReader(img))
+	// 	}
+	// 	png.Encode(buf, decoded)
+	// 	return buf.Bytes()
+	// case format == "jpg":
+	// 	decoded, err := jpeg.Decode(bytes.NewReader(img))
+	// 	for err != nil {
+	// 		img = img[1:]
+	// 		if len(img) == 0 {
+	// 			break
+	// 		}
+	// 		decoded, err = jpeg.Decode(bytes.NewReader(img))
+	// 	}
+	// 	jpeg.Encode(buf, decoded, nil)
+	// 	return buf.Bytes()
+	// 	// case format == "svg":
+	// 	// 	return img
+	// }
 	return img
 }
