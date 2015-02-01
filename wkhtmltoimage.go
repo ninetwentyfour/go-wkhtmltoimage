@@ -6,7 +6,6 @@ import (
 	"errors"
 	"image/jpeg"
 	"image/png"
-	"os"
 	"os/exec"
 	"strconv"
 	"strings"
@@ -14,6 +13,10 @@ import (
 
 // ImageOptions represent the options to generate the image.
 type ImageOptions struct {
+	// BinaryPath the path to your wkhtmltoimage binary. REQUIRED
+	//
+	// Must be absolute path e.g /usr/local/bin/wkhtmltoimage
+	BinaryPath string
 	// Input is the content to turn into an image. REQUIRED
 	//
 	// Can be a url (http://example.com), a local file (/tmp/example.html), or html as a string (send "-" and set the Html value)
@@ -52,12 +55,11 @@ func GenerateImage(options *ImageOptions) ([]byte, error) {
 		return []byte{}, err
 	}
 
-	execPath := os.Getenv("WKHTMLTOIMAGE_PATH")
-	if execPath == "" {
-		return []byte{}, errors.New("WKHTMLTOIMAGE_PATH env var not set")
+	if options.BinaryPath == "" {
+		return []byte{}, errors.New("BinaryPath not set")
 	}
 
-	cmd := exec.Command(execPath, arr...)
+	cmd := exec.Command(options.BinaryPath, arr...)
 
 	if options.Html != "" {
 		cmd.Stdin = strings.NewReader(options.Html)

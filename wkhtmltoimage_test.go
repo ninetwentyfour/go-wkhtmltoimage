@@ -1,7 +1,6 @@
 package wkhtmltoimage
 
 import (
-	"os"
 	"testing"
 )
 
@@ -131,14 +130,13 @@ func TestBuildParamsSetsAllParams(t *testing.T) {
 
 // this test has to be last cause it kills the env var - pretty hacky
 func TestGetImageReturnsErrorIfNoBinaryPath(t *testing.T) {
-	os.Setenv("WKHTMLTOIMAGE_PATH", "")
 	c := ImageOptions{Input: "http://example.com"}
 	_, err := GenerateImage(&c)
 
 	if err == nil {
 		t.Error("Expected err to not be nil, got nil")
 	}
-	if err.Error() != "WKHTMLTOIMAGE_PATH env var not set" {
-		t.Error("Expected WKHTMLTOIMAGE_PATH env var not set, got ", err.Error())
+	if err.Error() != "BinaryPath not set" {
+		t.Error("Expected BinaryPath not set, got ", err.Error())
 	}
 }

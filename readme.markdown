@@ -6,8 +6,6 @@ go wrapper around [wkhtmltoimage](http://wkhtmltopdf.org/).
 
 Not production ready.
 
-Requires setting a WKHTMLTOIMAGE_PATH env var with the path to your wkhtmltoimage binary (`export WKHTMLTOIMAGE_PATH=/usr/local/bin/wkhtmltoimage`)
-
 ## Install
 
 ### go-wkhtmltoimage
