@@ -2,10 +2,10 @@
 package wkhtmltoimage
 
 import (
-	// "bytes"
+	"bytes"
 	"errors"
-	// "image/jpeg"
-	// "image/png"
+	"image/jpeg"
+	"image/png"
 	"os/exec"
 	"strconv"
 	"strings"
@@ -63,13 +63,13 @@ func GenerateImage(options *ImageOptions) ([]byte, error) {
 		return []byte{}, errors.New("BinaryPath not set")
 	}
 
-	cmd := new(exec.Cmd)
-	if options.BinaryPrefix != "" {
-		arr = append([]string{options.BinaryPath}, arr...)
-		cmd = exec.Command(options.BinaryPrefix, arr...)
-	} else {
-		cmd = exec.Command(options.BinaryPath, arr...)
-	}
+	// cmd := new(exec.Cmd)
+	// if options.BinaryPrefix != "" {
+	// 	arr = append([]string{options.BinaryPath}, arr...)
+	// 	cmd = exec.Command(options.BinaryPrefix, arr...)
+	// } else {
+	cmd := exec.Command(options.BinaryPath, arr...)
+	// }
 
 	if options.Html != "" {
 		cmd.Stdin = strings.NewReader(options.Html)
@@ -87,14 +87,15 @@ func GenerateImage(options *ImageOptions) ([]byte, error) {
 func buildParams(options *ImageOptions) ([]string, error) {
 	a := []string{}
 
-	if options.BinaryPath == "" {
-		return []string{}, errors.New("BinaryPath not set")
+	if options.Input == "" {
+		return []string{}, errors.New("Must provide input")
 	}
 
 	// silence extra wkhtmltoimage output
 	// might want to add --javascript-delay too?
 	a = append(a, "-q")
 	a = append(a, "--disable-plugins")
+	// a = append(a, "--use-xserver")
 
 	a = append(a, "--format")
 	if options.Format != "" {
@@ -136,32 +137,32 @@ func buildParams(options *ImageOptions) ([]string, error) {
 }
 
 func cleanupOutput(img []byte, format string) []byte {
-	// buf := new(bytes.Buffer)
-	// switch {
-	// case format == "png":
-	// 	decoded, err := png.Decode(bytes.NewReader(img))
-	// 	for err != nil {
-	// 		img = img[1:]
-	// 		if len(img) == 0 {
-	// 			break
-	// 		}
-	// 		decoded, err = png.Decode(bytes.NewReader(img))
-	// 	}
-	// 	png.Encode(buf, decoded)
-	// 	return buf.Bytes()
-	// case format == "jpg":
-	// 	decoded, err := jpeg.Decode(bytes.NewReader(img))
-	// 	for err != nil {
-	// 		img = img[1:]
-	// 		if len(img) == 0 {
-	// 			break
-	// 		}
-	// 		decoded, err = jpeg.Decode(bytes.NewReader(img))
-	// 	}
-	// 	jpeg.Encode(buf, decoded, nil)
-	// 	return buf.Bytes()
-	// 	// case format == "svg":
-	// 	// 	return img
-	// }
+	buf := new(bytes.Buffer)
+	switch {
+	case format == "png":
+		decoded, err := png.Decode(bytes.NewReader(img))
+		for err != nil {
+			img = img[1:]
+			if len(img) == 0 {
+				break
+			}
+			decoded, err = png.Decode(bytes.NewReader(img))
+		}
+		png.Encode(buf, decoded)
+		return buf.Bytes()
+	case format == "jpg":
+		decoded, err := jpeg.Decode(bytes.NewReader(img))
+		for err != nil {
+			img = img[1:]
+			if len(img) == 0 {
+				break
+			}
+			decoded, err = jpeg.Decode(bytes.NewReader(img))
+		}
+		jpeg.Encode(buf, decoded, nil)
+		return buf.Bytes()
+		// case format == "svg":
+		// 	return img
+	}
 	return img
 }
